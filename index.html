@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>House Price Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:     #1a1a2e;
+    --paper:   #f5f0e8;
+    --cream:   #ede8dc;
+    --accent:  #c84b31;
+    --gold:    #d4a853;
+    --muted:   #7a7265;
+    --border:  #d0c9bc;
+    --white:   #ffffff;
+    --success: #2d6a4f;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--ink);
+    padding: 2.5rem 3rem;
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    border: 40px solid rgba(212,168,83,0.12);
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 200px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 28px solid rgba(200,75,49,0.10);
+  }
+
+  .header-icon {
+    font-size: 2.8rem;
+    line-height: 1;
+  }
+
+  .header-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+
+  .header-text p {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin-top: 4px;
+  }
+
+  .badge {
+    margin-left: auto;
+    background: rgba(212,168,83,0.15);
+    border: 1px solid rgba(212,168,83,0.3);
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    align-self: center;
+  }
+
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2rem; }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    header { padding: 1.8rem; }
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="number"]:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(200,75,49,0.08);
+    background: var(--white);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7265' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  .toggle-group {
+    display: flex;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .toggle-group input[type="radio"] { display: none; }
+
+  .toggle-group label {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0;
+    border-radius: 0;
+  }
+
+  .toggle-group input[type="radio"]:checked + label {
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .toggle-group label:hover:not(.checked) {
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  .predict-btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 0.5rem;
+    background: var(--ink);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .predict-btn:hover { background: #2d2d4a; transform: translateY(-1px); }
+  .predict-btn:active { transform: translateY(0); }
+  .predict-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .result-box {
+    display: none;
+    margin-top: 1.5rem;
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-box::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(212,168,83,0.08);
+  }
+
+  .result-box .result-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 10px;
+  }
+
+  .result-box .result-price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem;
+    color: var(--gold);
+    letter-spacing: -1px;
+  }
+
+  .result-box .result-note {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 8px;
+  }
+
+  .error-box {
+    display: none;
+    margin-top: 1.5rem;
+    background: #fff5f5;
+    border: 1px solid #ffc9c9;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-icon">🏡</div>
+  <div class="header-text">
+    <h1>House Price Predictor</h1>
+    <p>Linear Regression Model · Housing Dataset</p>
+  </div>
+  <span class="badge">ML MODEL</span>
+</header>
+
+<main>
+
+  <!-- Numeric Features -->
+  <div class="section-label">Property Details</div>
+  <div class="card">
+    <div class="grid-2" style="margin-bottom:1.2rem">
+      <div class="field">
+        <label>Area (sq ft)</label>
+        <input type="number" id="area" placeholder="e.g. 7000" min="1000" max="20000"/>
+      </div>
+      <div class="field">
+        <label>Parking Spots</label>
+        <input type="number" id="parking" placeholder="e.g. 1" min="0" max="5"/>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Bedrooms</label>
+        <input type="number" id="bedrooms" placeholder="e.g. 3" min="1" max="10"/>
+      </div>
+      <div class="field">
+        <label>Bathrooms</label>
+        <input type="number" id="bathrooms" placeholder="e.g. 2" min="1" max="10"/>
+      </div>
+      <div class="field">
+        <label>Stories / Floors</label>
+        <input type="number" id="stories" placeholder="e.g. 2" min="1" max="10"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Furnishing -->
+  <div class="section-label">Furnishing</div>
+  <div class="card">
+    <div class="field">
+      <label>Furnishing Status</label>
+      <select id="furnishingstatus">
+        <option value="">— Select —</option>
+        <option value="furnished">Furnished</option>
+        <option value="semi-furnished">Semi-Furnished</option>
+        <option value="unfurnished">Unfurnished</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Yes/No Toggles -->
+  <div class="section-label">Amenities & Location</div>
+  <div class="card">
+    <div class="grid-2" style="gap: 1.5rem">
+
+      <div class="field">
+        <label>Main Road Access</label>
+        <div class="toggle-group">
+          <input type="radio" name="mainroad" id="mainroad_yes" value="yes"/>
+          <label for="mainroad_yes">Yes</label>
+          <input type="radio" name="mainroad" id="mainroad_no"  value="no" checked/>
+          <label for="mainroad_no">No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Guest Room</label>
+        <div class="toggle-group">
+          <input type="radio" name="guestroom" id="guestroom_yes" value="yes"/>
+          <label for="guestroom_yes">Yes</label>
+          <input type="radio" name="guestroom" id="guestroom_no"  value="no" checked/>
+          <label for="guestroom_no">No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Basement</label>
+        <div class="toggle-group">
+          <input type="radio" name="basement" id="basement_yes" value="yes"/>
+          <label for="basement_yes">Yes</label>
+          <input type="radio" name="basement" id="basement_no"  value="no" checked/>
+          <label for="basement_no">No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Hot Water Heating</label>
+        <div class="toggle-group">
+          <input type="radio" name="hotwaterheating" id="hwh_yes" value="yes"/>
+          <label for="hwh_yes">Yes</label>
+          <input type="radio" name="hotwaterheating" id="hwh_no"  value="no" checked/>
+          <label for="hwh_no">No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Air Conditioning</label>
+        <div class="toggle-group">
+          <input type="radio" name="airconditioning" id="ac_yes" value="yes"/>
+          <label for="ac_yes">Yes</label>
+          <input type="radio" name="airconditioning" id="ac_no"  value="no" checked/>
+          <label for="ac_no">No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Preferred Area</label>
+        <div class="toggle-group">
+          <input type="radio" name="prefarea" id="pref_yes" value="yes"/>
+          <label for="pref_yes">Yes</label>
+          <input type="radio" name="prefarea" id="pref_no"  value="no" checked/>
+          <label for="pref_no">No</label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Button -->
+  <button class="predict-btn" onclick="predictPrice()">
+    <div class="spinner" id="spinner"></div>
+    <span id="btn-text">Predict House Price</span>
+  </button>
+
+  <!-- Result -->
+  <div class="result-box" id="result-box">
+    <div class="result-label">Estimated Market Value</div>
+    <div class="result-price" id="result-price">—</div>
+    <div class="result-note">Based on Linear Regression · Housing Dataset</div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-box" id="error-box"></div>
+
+</main>
+
+<script>
+  function getRadio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : null;
+  }
+
+  function showError(msg) {
+    const eb = document.getElementById("error-box");
+    eb.textContent = "⚠ " + msg;
+    eb.style.display = "block";
+    document.getElementById("result-box").style.display = "none";
+  }
+
+  async function predictPrice() {
+    document.getElementById("error-box").style.display = "none";
+
+    const area      = document.getElementById("area").value.trim();
+    const bedrooms  = document.getElementById("bedrooms").value.trim();
+    const bathrooms = document.getElementById("bathrooms").value.trim();
+    const stories   = document.getElementById("stories").value.trim();
+    const parking   = document.getElementById("parking").value.trim();
+    const furnish   = document.getElementById("furnishingstatus").value;
+
+    if (!area || !bedrooms || !bathrooms || !stories || !parking || !furnish) {
+      return showError("Please fill in all fields before predicting.");
+    }
+
+    const payload = {
+      area:             parseInt(area),
+      bedrooms:         parseInt(bedrooms),
+      bathrooms:        parseInt(bathrooms),
+      stories:          parseInt(stories),
+      parking:          parseInt(parking),
+      furnishingstatus: furnish,
+      mainroad:         getRadio("mainroad"),
+      guestroom:        getRadio("guestroom"),
+      basement:         getRadio("basement"),
+      hotwaterheating:  getRadio("hotwaterheating"),
+      airconditioning:  getRadio("airconditioning"),
+      prefarea:         getRadio("prefarea"),
+    };
+
+    const btn = document.querySelector(".predict-btn");
+    btn.disabled = true;
+    document.getElementById("spinner").style.display = "block";
+    document.getElementById("btn-text").textContent = "Predicting...";
+
+    try {
+      const response = await fetch("/predict", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Server error: " + response.status);
+
+      const data  = await response.json();
+      const price = data.predicted_price;
+
+      const formatted = "₹" + price.toLocaleString("en-IN", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+
+      document.getElementById("result-price").textContent = formatted;
+      document.getElementById("result-box").style.display = "block";
+
+    } catch (err) {
+      showError("Could not connect to the Flask server. Make sure app.py is running on localhost:5000.");
+    } finally {
+      btn.disabled = false;
+      document.getElementById("spinner").style.display = "none";
+      document.getElementById("btn-text").textContent = "Predict House Price";
+    }
+  }
+</script>
+
+</body>
+</html>
