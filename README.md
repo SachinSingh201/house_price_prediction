@@ -1,29 +1,33 @@
-# Task 3: Linear Regression — House Price Prediction
+# House Price Prediction using Linear Regression
 
-## Objective
+## Project Overview
 
-To implement and understand **Simple and Multiple Linear Regression** using a **House Price Prediction Dataset**, and evaluate the model performance using various regression metrics.
+This project focuses on building a **House Price Prediction System** using **Linear Regression**.
+The model analyzes different house features such as area, number of bedrooms, bathrooms, and other amenities to **predict the price of a house**.
+
+The trained model is deployed using a **Flask web application**, allowing users to input house details and get an estimated price instantly.
 
 ---
 
-# Tools & Technologies Used
+# Technologies Used
 
 * Python
 * Pandas
 * NumPy
-* Matplotlib
 * Scikit-learn
+* Matplotlib
+* Flask
+* HTML
+* Pickle
 
 ---
 
-# Dataset Information
+# Dataset Description
 
-**Dataset:** Housing.csv
-**Rows:** 545
-**Columns:** 13
-**Target Variable:** Price
+The dataset used in this project contains **545 rows and 13 columns**.
+It includes various features that influence house prices.
 
-Features included:
+### Features Used for Prediction
 
 * Area
 * Bedrooms
@@ -38,90 +42,36 @@ Features included:
 * Prefarea
 * Furnishingstatus
 
----
+**Target Variable:**
 
-# Step 1: Import and Preprocess Dataset
-
-### What was done
-
-* Dataset loaded using Pandas
-* Checked dataset structure and missing values
-* Converted categorical values to numeric format
-* Binary features converted (Yes/No → 1/0)
-* Furnishing status encoded using label encoding
-* Dataset prepared for regression model
-
-### Findings
-
-* Dataset contained categorical values
-* Binary encoding applied to features like mainroad, guestroom, basement
-* Label encoding applied to furnishing status
-* No major missing values found
-* Data successfully cleaned and ready for model training
-
-### Learning
-
-* Importance of data preprocessing
-* Binary encoding of categorical values
-* Label encoding for multiple categories
-* Preparing dataset for machine learning
+* Price
 
 ---
 
-# Step 2: Train-Test Split
+# How the Model Predicts House Prices
 
-### What was done
+The prediction process follows these steps:
 
-* Features and target variable separated
-* Dataset split into training and testing sets
-* 80% used for training
-* 20% used for testing
+### 1. Data Preprocessing
 
-### Findings
-
-* Training dataset used for model learning
-* Testing dataset used for evaluation
-* Proper data splitting avoids overfitting
-
-### Learning
-
-* Train-test split concept
-* Importance of testing dataset
-* Avoiding overfitting in machine learning
+* The dataset is cleaned and prepared
+* Categorical values are converted into numerical values
+* Binary values such as Yes/No are converted into 1 and 0
+* Data becomes suitable for machine learning model training
 
 ---
 
-# Step 3: Fit Linear Regression Model
+### 2. Model Training
 
-### What was done
-
-* Linear Regression model created
-* Model trained using training data
-* Multiple regression applied using all features
-
-### Findings
-
-* Model successfully trained
-* Coefficients generated for each feature
-* Features like area, bathrooms showed strong influence
-
-### Learning
-
-* Simple vs Multiple Linear Regression
-* Model fitting process
-* Understanding feature coefficients
-* Regression modeling fundamentals
+* Linear Regression algorithm is used
+* The model learns relationships between features and house price
+* Multiple features are used to improve prediction accuracy
 
 ---
 
-# Step 4: Model Evaluation and Accuracy
+### 3. Model Evaluation
 
-### What was done
-
-* Predictions made on test data
-* Evaluation metrics calculated
-
-Metrics used:
+The model performance is evaluated using:
 
 * Mean Absolute Error (MAE)
 * Mean Squared Error (MSE)
@@ -129,92 +79,83 @@ Metrics used:
 * R² Score
 * Accuracy using MAPE
 
-### Findings
-
-* Model predicted house prices successfully
-* R² score showed model performance
-* Accuracy calculated using percentage error
-* Lower error values indicate better model
-
-### Learning
-
-* Model evaluation metrics
-* Understanding regression accuracy
-* Importance of R² score
-* Error interpretation
+These metrics help measure how well the model predicts house prices.
 
 ---
 
-# Step 5: Plot Regression Line and Interpretation
+### 4. Model Saving
 
-### What was done
-
-* Simple linear regression performed using area vs price
-* Regression line plotted
-* Relationship visualized
-
-### Findings
-
-* Area strongly affects house price
-* Linear relationship observed
-* Model visually validated
-
-### Learning
-
-* Visualizing regression
-* Understanding linear relationships
-* Simple regression interpretation
+* After training, the model is saved using Pickle
+* Saved as **model.pkl**
+* This allows reuse without retraining
 
 ---
 
-# Overall Results
+### 5. Web Application Prediction
 
-* Linear Regression model successfully implemented
-* Dataset cleaned and preprocessed
-* Model trained and evaluated
-* Accuracy calculated
-* Relationship between features analyzed
+* User enters house details in the web interface
+* Flask app loads the trained model
+* Model processes the input data
+* Predicted house price is displayed to the user
 
 ---
 
-# What I Learned
+# Project Structure
 
-* Linear Regression fundamentals
-* Simple Linear Regression
-* Multiple Linear Regression
-* Data preprocessing
-* Binary encoding
-* Label encoding
-* Train-test split
-* Model training
-* Model evaluation
-* Accuracy calculation
-* Regression visualization
-* Feature importance
+```
+House-Price-Prediction/
+│
+├── app.py
+├── model.pkl
+├── Housing.csv
+
+│─ index.html
+│
+└── README.md
+```
+
+---
+
+# Files Included
+
+* **app.py** — Flask application for prediction
+* **model.pkl** — Trained Linear Regression model
+* **index.html** — Web interface
+* **Housing.csv** — Dataset
+* **README.md** — Project documentation
+
+---
+
+# Features of the Project
+
+* Predict house price using multiple features
+* User-friendly web interface
+* Machine learning based prediction
+* Model saved using Pickle
+* Fast and efficient prediction
+
+---
+
+# Learning Outcomes
+
+* Linear Regression implementation
+* Data preprocessing techniques
+* Model training and evaluation
+* Machine learning deployment
+* Flask web application development
+* Model saving using Pickle
 
 ---
 
 # Conclusion
 
-The Linear Regression model was successfully implemented for house price prediction.
-Data preprocessing improved model performance.
-Evaluation metrics helped understand accuracy.
-The project provided practical knowledge of regression modeling.
-
----
-
-# Project Outcome
-
-Successfully learned:
-
-* Regression modeling
-* Evaluation metrics
-* Model interpretation
-* Machine learning workflow
+This project demonstrates how **Linear Regression** can be used to predict house prices based on various features.
+The trained model is deployed as a **web application**, making it easy for users to estimate house prices quickly and efficiently.
 
 ---
 
 # Author
 
-Sachin Singh
-House Price Prediction Project
+**Sachin Singh**
+Machine Learning Project
+House Price Prediction
